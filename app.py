@@ -14,6 +14,7 @@ conn = sqlite3.connect("client.db")
 cursor = conn.cursor()
 
 # The after_request will clear the cache which is important to not save users' sensitive data
+@app.after_request
 def after_request(response):
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     response.headers["Expires"] = 0
@@ -32,3 +33,7 @@ def login():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     return render_template("register.html")
+
+@app.route("/add", methods=["GET", "POST"])
+def add():
+    return render_template("add.html")
