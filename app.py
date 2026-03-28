@@ -6,6 +6,9 @@ import sqlite3
 # from flask_session import Session is not needed for a small project
 from flask import Flask, flash, redirect, render_template, request, session
 
+# This is to add wraps into my decorator so the replaced function name stays the same
+from functools import wraps
+
 # Configure application
 app = Flask(__name__)
 
@@ -21,11 +24,16 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
-# Not all routes are working
-@app.route("/")
-def index():
-    return render_template("index.html")
+# Decorate routes to require login
+def login_required(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if session.get("user_id") is None:
+            return redirect("/login")
+        return f(*args, **kwargs)
+    return wrapper
 
+# All the routes
 @app.route("/login", methods=["GET", "POST"])
 def login():
     return render_template("login.html")
@@ -34,6 +42,12 @@ def login():
 def register():
     return render_template("register.html")
 
+@app.route("/")
+@login_required
+def index():
+    return render_template("index.html")
+
 @app.route("/add", methods=["GET", "POST"])
+@login_required
 def add():
     return render_template("add.html")
