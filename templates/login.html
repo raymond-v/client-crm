@@ -4,7 +4,16 @@
     Login
 {% endblock %}
 
-
 {% block main %}
-    <p>Login Testing</p>
+    <form action="/login" method="post">
+        <div class="form-floating mb-3" style="max-width: 400px; margin: auto;">
+            <input name="username" type="text" class="form-control" placeholder="Username" autocomplete="off">
+            <label for="floatingInput">Username</label>
+        </div>
+        <div class="form-floating mb-3" style="max-width: 400px; margin: auto;">
+            <input name="password" type="password" class="form-control" placeholder="Password" autocomplete="off">
+            <label for="floatingPassword">Password</label>
+        </div>
+        <button class="btn btn-primary" type="submit">Login</button>
+    </form>
 {% endblock %}
