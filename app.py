@@ -16,6 +16,20 @@ app = Flask(__name__)
 conn = sqlite3.connect("client.db")
 cursor = conn.cursor()
 
+# Create the user table
+cursor.execute("""
+CREATE TABLE users(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL UNIQUE,
+    hash TEXT NOT NULL)
+""")
+
+# Save all changes
+conn.commit()
+
+# Close once at the end
+conn.close()
+
 # The after_request will clear the cache which is important to not save users' sensitive data
 @app.after_request
 def after_request(response):
