@@ -6,11 +6,17 @@ import sqlite3
 # from flask_session import Session is not needed for a small project
 from flask import Flask, flash, redirect, render_template, request, session
 
+# Tool for hashing passwords securely
+from werkzeug.security import generate_password_hash, check_password_hash 
+
 # This is to add wraps into my decorator so the replaced function name stays the same
 from functools import wraps
 
 # Configure application
 app = Flask(__name__)
+
+# Required for flash/session
+app.secret_key = "supersecretkey"
 
 # Make a new db
 conn = sqlite3.connect("client.db")
@@ -54,7 +60,29 @@ def login():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    return render_template("register.html")
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        confirmation = request.form.get("confirmation")
+
+        if not username:
+            flash("Name is required")
+            return render_template("register.html")
+        elif not password:
+            flash("Password is required")
+            return render_template("register.html")
+        elif not confirmation:
+            flash("Confirmation is required")
+            return render_template("register.html")
+        
+        if password != confirmation:
+            flash("Confirmation does not match password")
+            return render_template("register.html")
+        
+        flash("Registration successful")
+        return redirect("/login")
+    else:
+        return render_template("register.html")
 
 @app.route("/")
 @login_required
@@ -65,3 +93,7 @@ def index():
 @login_required
 def add():
     return render_template("add.html")
+
+# Debug mode enabled
+if __name__ == "__main__":
+    app.run(debug=True)
