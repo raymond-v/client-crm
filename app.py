@@ -33,9 +33,6 @@ CREATE TABLE IF NOT EXISTS users(
 # Save all changes
 conn.commit()
 
-# Close once at the end
-conn.close()
-
 # The after_request will clear the cache which is important to not save users' sensitive data
 @app.after_request
 def after_request(response):
@@ -79,8 +76,33 @@ def register():
             flash("Confirmation does not match password")
             return render_template("register.html")
         
-        flash("Registration successful")
-        return redirect("/login")
+        try:
+            # Create a new database connection and cursor for this request
+            # Cannot use the global connection/cursor because of threading issues
+            conn = sqlite3.connect("client.db")
+            cursor = conn.cursor()
+            cursor.execute("INSERT INTO users (username, hash) VALUES (?, ?)", (username, generate_password_hash(password)))
+            conn.commit()
+
+            cursor.execute("SELECT id FROM users WHERE username = ?", (username,))
+            row = cursor.fetchone()
+            conn.close()
+
+            if row:
+                user_id = row[0]
+            else:
+                user_id = None
+
+            # Store id of the user from users table in session
+            session["user_id"] = user_id
+
+            flash("Registration successful")
+            return redirect("/")
+            
+        except ValueError:
+            flash("Username already taken")
+            return redirect("/register")
+
     else:
         return render_template("register.html")
 
@@ -93,7 +115,3 @@ def index():
 @login_required
 def add():
     return render_template("add.html")
-
-# Debug mode enabled
-if __name__ == "__main__":
-    app.run(debug=True)
