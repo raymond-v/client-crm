@@ -51,10 +51,6 @@ def login_required(f):
     return wrapper
 
 # All the routes
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    return render_template("login.html")
-
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -99,17 +95,82 @@ def register():
             flash("Registration successful")
             return redirect("/")
             
-        except ValueError:
+        except sqlite3.IntegrityError:
             flash("Username already taken")
             return redirect("/register")
 
     else:
         return render_template("register.html")
+    
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+    
+        if not username:
+            flash("Username is required")
+            return redirect("/login")
+
+        elif not password:
+            flash("Password is required")
+            return redirect("/login")
+        
+        # Create a new database connection and cursor for this request
+        # Cannot use the global connection/cursor because of threading issues
+        conn = sqlite3.connect("client.db")
+        cursor = conn.cursor()
+        
+        cursor.execute("SELECT id, hash FROM users WHERE username = ?", (username,))
+        row = cursor.fetchone()
+        conn.close()
+
+        if row is None:
+            flash("Incorrect information")
+            return redirect("/login")
+        
+        check_password = row[1]
+
+        # check_password_hash returns True or False
+        # No need to check if username == check_username because I already passed the username form into the query
+        if check_password_hash(check_password, password):
+
+            # No need to "if row:" and "else: user_id = None" because I already checked if row exist above
+            user_id = row[0]
+
+            # Store id of the user from users table in session
+            session["user_id"] = user_id
+
+            return redirect("/")
+        
+        else:
+            flash("Incorrect information")
+            return redirect("/login")
+
+    else:
+        return render_template("login.html")
+    
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/login")
 
 @app.route("/")
 @login_required
 def index():
-    return render_template("index.html")
+    # Create a new database connection and cursor for this request
+    # Cannot use the global connection/cursor because of threading issues
+    conn = sqlite3.connect("client.db")
+    cursor = conn.cursor()
+        
+    cursor.execute("SELECT username FROM users WHERE id = ?", (session["user_id"],))
+    row = cursor.fetchone()
+    username = row[0]
+    conn.close()
+
+    
+
+    return render_template("index.html", username=username)
 
 @app.route("/add", methods=["GET", "POST"])
 @login_required

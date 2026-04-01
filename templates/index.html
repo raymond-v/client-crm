@@ -5,5 +5,27 @@
 {% endblock %}
 
 {% block main %}
-    <p>Home Testing</p>
+    <h1 class="mb-5">Welcome, {{ username }}</h1>
+    <table class="table table-light table-striped">
+        <thead>
+            <tr>
+                <th>Priority</td>
+                <th>Handle</th>
+                <th>Status</th>
+                <th>Cost</th>
+                <th>Deadline</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>#</td>
+                <td>@</td>
+                <td>Lead to Deal</td>
+                <td>$</td>
+                <td>Date</td>
+                <td>Info</td>
+            </tr>
+        </tbody>
+    </table>
 {% endblock %}
