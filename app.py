@@ -30,6 +30,19 @@ CREATE TABLE IF NOT EXISTS users(
     hash TEXT NOT NULL)
 """)
 
+# Create the clients table to showcase information of each client
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS clients(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    handle TEXT NOT NULL,
+    platform TEXT NOT NULL,
+    status TEXT NOT NULL,
+    cost NUMERIC,
+    notes TEXT,
+    FOREIGN KEY(user_id) REFERENCES users(id))
+""")
+
 # Save all changes
 conn.commit()
 
@@ -189,10 +202,10 @@ def add():
         if not found:
             flash("Link must come from YouTube, Instagram, TikTok")
             return redirect("/add")
-        
+
         
 
         return redirect("/")
-
+    
     else:
         return render_template("add.html")
