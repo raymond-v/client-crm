@@ -5,5 +5,23 @@
 {% endblock %}
 
 {% block main %}
-    <p>Add Testing</p>
+    <h1 class="mb-5">Add Client</h1>
+    <form action="/add" method="post">
+        <div class="input-group mb-3 input-group-lg flex-nowrap">
+            <span class="input-group-text" id="addon-wrapping">Profile</span>
+            <input type="profile" class="form-control" placeholder="Paste link..." aria-label="Username" aria-describedby="addon-wrapping" required>
+        </div>
+
+        <div class="input-group mb-3 input-group-lg">
+            <label class="input-group-text" for="inputGroupSelect01">Platform</label>
+            <select class="form-select" id="inputGroupSelect01" required>
+                <option value="" selected>Select platform...</option>
+                <option value="1">YouTube</option>
+                <option value="2">Instagram</option>
+                <option value="3">TikTok</option>
+            </select>
+        </div>
+
+        <button class="btn btn-primary" type="submit">Add</button>
+    </form>
 {% endblock %}
