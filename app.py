@@ -168,11 +168,31 @@ def index():
     username = row[0]
     conn.close()
 
-    
-
     return render_template("index.html", username=username)
 
 @app.route("/add", methods=["GET", "POST"])
 @login_required
 def add():
-    return render_template("add.html")
+    if request.method == "POST":
+        link = request.form.get("link")
+        if not link:
+            flash("Profile link required")
+            return redirect("/add")
+        
+        # Proceed if the link is from the platforms' list
+        platforms = ["youtube", "instagram", "tiktok"]
+        found = False
+        for platform in platforms:
+            if platform in link.lower():
+                found = True
+                break
+        if not found:
+            flash("Link must come from YouTube, Instagram, TikTok")
+            return redirect("/add")
+        
+        
+
+        return redirect("/")
+
+    else:
+        return render_template("add.html")
