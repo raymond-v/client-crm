@@ -179,9 +179,15 @@ def index():
     cursor.execute("SELECT username FROM users WHERE id = ?", (session["user_id"],))
     row = cursor.fetchone()
     username = row[0]
+
+    cursor.execute("SELECT handle, platform, status, cost, notes FROM clients WHERE user_id = ?", (session["user_id"],))
+    table = cursor.fetchall()
     conn.close()
 
-    return render_template("index.html", username=username)
+    return render_template("index.html", username=username, table=table)
+
+# re is a module to work with regular expressions (patterns for matching text)
+import re
 
 @app.route("/add", methods=["GET", "POST"])
 @login_required
@@ -195,15 +201,41 @@ def add():
         # Proceed if the link is from the platforms' list
         platforms = ["youtube", "instagram", "tiktok"]
         found = False
-        for platform in platforms:
-            if platform in link.lower():
+        for p in platforms:
+            if p in link.lower():
                 found = True
+                platform = p.capitalize()
                 break
         if not found:
             flash("Link must come from YouTube, Instagram, TikTok")
             return redirect("/add")
 
+        # In regex . by itself means any single character so we type \. to call for a .
+        # ([^/]+) captures everything up until the next /
+        # @? matches either an @ or nothing
+        # re.search returns a match object so capturing the text, you need .group(1)
+        # .group(0) returns the full regex match (no brackets) and .group(1) returns the text that matched the first group (first bracket: ([^/]+))
+        match = re.search(r"\.com/@?([^/]+)", link)
+
+        if not match:
+            flash("Could not find handle")
+            return redirect("/add")
+
+        handle = match.group(1)
+        status = "Lead"
+        cost = ""
+        notes = ""
         
+        # Create a new database connection and cursor for this request
+        # Cannot use the global connection/cursor because of threading issues
+        conn = sqlite3.connect("client.db")
+        cursor = conn.cursor()
+        
+        cursor.execute("INSERT INTO clients (user_id, handle, platform, status, cost, notes) VALUES (?, ?, ?, ?, ?, ?)",
+            (session["user_id"], handle, platform, status, cost, notes)
+        )
+        conn.commit()
+        conn.close()
 
         return redirect("/")
     
