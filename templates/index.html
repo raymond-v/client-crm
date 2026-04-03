@@ -14,6 +14,7 @@
                 <th>Status</th>
                 <th>Cost</th>
                 <th>Notes</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -24,6 +25,10 @@
                 <td>{{ column[2] }}</td>
                 <td>{{ column[3] }}</td>
                 <td>{{ column[4] }}</td>
+                <td>
+                    <a href="/edit" class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">Edit</a>
+                    <a href="/delete" class="link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">Delete</a>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
