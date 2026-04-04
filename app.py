@@ -180,7 +180,7 @@ def index():
     row = cursor.fetchone()
     username = row[0]
 
-    cursor.execute("SELECT handle, platform, status, cost, notes FROM clients WHERE user_id = ?", (session["user_id"],))
+    cursor.execute("SELECT handle, platform, status, cost, notes, id FROM clients WHERE user_id = ?", (session["user_id"],))
     table = cursor.fetchall()
     conn.close()
 
@@ -241,3 +241,30 @@ def add():
     
     else:
         return render_template("add.html")
+    
+@app.route("/edit/<int:id>", methods=["GET", "POST"])
+@login_required
+def edit(id):
+    if request.method == "POST":
+        back = request.form.get("back")
+        save = request.form.get("save")
+        if back:
+            return redirect("/")
+        
+        if save:
+            return redirect("/")
+        
+        flash("Unable to save")
+        return redirect("/")
+    
+    else:
+        # Create a new database connection and cursor for this request
+        # Cannot use the global connection/cursor because of threading issues
+        conn = sqlite3.connect("client.db")
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT handle, platform, status, cost, notes, id FROM clients WHERE id = ?", (id,))
+        table = cursor.fetchall()
+        conn.close()
+
+        return render_template("edit.html", table=table)

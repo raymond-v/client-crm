@@ -26,8 +26,8 @@
                 <td>{{ column[3] }}</td>
                 <td>{{ column[4] }}</td>
                 <td>
-                    <a href="/edit" class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">Edit</a>
-                    <a href="/delete" class="link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">Delete</a>
+                    <a href="/edit/{{ column[5] }}" class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">Edit</a>
+                    <a href="/delete/{{ column[5] }}" class="link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">Delete</a>
                 </td>
             </tr>
             {% endfor %}
