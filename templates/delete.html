@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Delete
+{% endblock %}
+
+{% block main %}
+    <h1 class="mb-5">Delete Client</h1>
+    <form action="/delete/{{ id }}" method="post">
+
+        <div class="alert alert-danger mb-5" role="alert">
+            Are you sure you want to delete?
+        </div>
+        
+        <button name="back" value="back" type="submit" class="btn btn-secondary">Back</button>
+        <button name="confirm" value="confirm" type="submit" class="btn btn-primary">Confirm</button>
+    </form>
+
+{% endblock %}

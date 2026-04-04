@@ -285,3 +285,32 @@ def edit(id):
         conn.close()
 
         return render_template("edit.html", table=table)
+    
+@app.route("/delete/<int:id>", methods=["GET", "POST"])
+@login_required
+def delete(id):
+    if request.method == "POST":
+        back = request.form.get("back")
+        confirm = request.form.get("confirm")
+
+        if back:
+            return redirect("/")
+        
+        if confirm:
+            # Create a new database connection and cursor for this request
+            # Cannot use the global connection/cursor because of threading issues
+            conn = sqlite3.connect("client.db")
+            cursor = conn.cursor()
+
+            cursor.execute("DELETE FROM clients WHERE id = ?", (id,))
+            conn.commit()
+            conn.close()
+
+            flash("Successfully remove client")
+            return redirect("/")
+        
+        flash("Unable to remove client")
+        return redirect("/")
+    
+    else:
+        return render_template("delete.html", id=id)
