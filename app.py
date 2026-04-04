@@ -248,12 +248,25 @@ def edit(id):
     if request.method == "POST":
         back = request.form.get("back")
         save = request.form.get("save")
+
+        handle = request.form.get("handle")
+        platform = request.form.get("platform")
+        status = request.form.get("status")
+        cost = request.form.get("cost")
+        notes = request.form.get("notes")
+
         if back:
             return redirect("/")
         
         if save:
-            
+            # Create a new database connection and cursor for this request
+            # Cannot use the global connection/cursor because of threading issues
+            conn = sqlite3.connect("client.db")
+            cursor = conn.cursor()
 
+            cursor.execute("UPDATE clients SET handle=?, platform=?, status=?, cost=?, notes=? WHERE id = ?", (handle, platform, status, cost, notes, id))
+            conn.commit()
+            conn.close()
 
             flash("Updated client information")
             return redirect("/")
