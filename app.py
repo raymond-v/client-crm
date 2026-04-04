@@ -252,6 +252,10 @@ def edit(id):
             return redirect("/")
         
         if save:
+            
+
+
+            flash("Updated client information")
             return redirect("/")
         
         flash("Unable to save")
