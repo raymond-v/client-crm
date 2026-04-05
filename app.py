@@ -180,11 +180,18 @@ def index():
     row = cursor.fetchone()
     username = row[0]
 
-    cursor.execute("SELECT handle, platform, status, cost, notes, id FROM clients WHERE user_id = ?", (session["user_id"],))
-    table = cursor.fetchall()
-    conn.close()
+    # "all" is just a deafult in case no radio is selected
+    selected_status = request.args.get("status", "all")
+    if selected_status == "all":
+        cursor.execute("SELECT handle, platform, status, cost, notes, id FROM clients WHERE user_id = ?", (session["user_id"],))
+        table = cursor.fetchall()
+        conn.close()
+    else:
+        cursor.execute("SELECT handle, platform, status, cost, notes, id FROM clients WHERE user_id = ? AND status = ?", (session["user_id"], selected_status))
+        table = cursor.fetchall()
+        conn.close()
 
-    return render_template("index.html", username=username, table=table)
+    return render_template("index.html", username=username, table=table, selected_status=selected_status)
 
 # re is a module to work with regular expressions (patterns for matching text)
 import re

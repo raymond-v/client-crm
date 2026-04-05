@@ -6,7 +6,41 @@
 
 {% block main %}
     <h1 class="mb-5">{{ username }}'s Client List</h1>
-    <table class="table table-light table-striped">
+
+    <form method="get">
+        <div class="d-flex justify-content-center align-items-center gap-5">
+            <div class="d-flex align-items-center gap-2">
+                <input type="radio" name="status" value="all" {% if selected_status == "all" %}checked{% endif %} onchange="this.form.submit()">
+                <label>All</label>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <input type="radio" name="status" value="Lead" {% if selected_status == "Lead" %}checked{% endif %} onchange="this.form.submit()">
+                <label>Lead</label>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <input type="radio" name="status" value="Contacted" {% if selected_status == "Contacted" %}checked{% endif %} onchange="this.form.submit()">
+                <label>Contacted</label>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <input type="radio" name="status" value="Replied" {% if selected_status == "Replied" %}checked{% endif %} onchange="this.form.submit()">
+                <label>Replied</label>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <input type="radio" name="status" value="Negotiating" {% if selected_status == "Negotiating" %}checked{% endif %} onchange="this.form.submit()">
+                <label>Negotiating</label>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <input type="radio" name="status" value="Deal" {% if selected_status == "Deal" %}checked{% endif %} onchange="this.form.submit()">
+                <label>Deal</label>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <input type="radio" name="status" value="Completed" {% if selected_status == "Completed" %}checked{% endif %} onchange="this.form.submit()">
+                <label>Completed</label>
+            </div>
+        </div>
+    </form>
+
+    <table class="table table-light table-striped mt-3">
         <thead>
             <tr>
                 <th>Handle</th>

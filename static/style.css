@@ -1,9 +1,0 @@
-/* Make the default select option light grey */
-select:invalid {
-    color: #6c757d;
-}
-
-/* Normal dropdown options appear black */
-select option {
-    color: black;
-}
