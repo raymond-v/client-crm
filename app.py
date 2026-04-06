@@ -321,3 +321,69 @@ def delete(id):
     
     else:
         return render_template("delete.html", id=id)
+    
+
+import matplotlib.pyplot as plt
+
+# Counter is a library from Python's collections module
+# Counts how many times each value appears in a list (or any iterable)
+from collections import Counter
+
+@app.route("/dashboard")
+@login_required
+def dashboard():
+    # Create a new database connection and cursor for this request
+    # Cannot use the global connection/cursor because of threading issues
+    conn = sqlite3.connect("client.db")
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT platform FROM clients WHERE user_id = ?", (session["user_id"],))
+    platform = cursor.fetchall()
+
+    cursor.execute("SELECT status FROM clients WHERE user_id = ?", (session["user_id"],))
+    status = cursor.fetchall()
+
+    cursor.execute("SELECT cost FROM clients WHERE user_id = ?", (session["user_id"],))
+    cost = cursor.fetchall()
+
+    # Convert into a list for plt
+    # p[0] means first item of the tuple
+    platform_list = []
+    for p in platform:
+        platform_list.append(p[0])
+
+    status_list = []
+    for s in status:
+        status_list.append(s[0])
+
+    cost_list = []
+    for c in cost:
+        if c[0] != "" and c[0] is not None:
+            cost_list.append(float(c[0]))
+
+    platform_count = Counter(platform_list)
+    status_count = Counter(status_list)
+
+    # labels will return a list with unique labels (no duplicates)
+    # sizes will return a list without the keys (only total count of each label)
+    platform_labels = list(platform_count.keys())
+    platform_sizes = list(platform_count.values())
+
+    status_labels = list(status_count.keys())
+    status_sizes = list(status_count.values())
+
+    plt.pie(platform_sizes, labels=platform_labels, autopct="%.1f%%")
+    plt.title("Clients by Platform")
+    plt.savefig("static/platform.png")
+    plt.close()
+
+    plt.bar(status_labels, status_sizes)
+    plt.title("Clients by Status")
+    plt.xlabel("Status")
+    plt.ylabel("Number of Clients")
+    plt.savefig("static/status.png")
+    plt.close()
+
+    cost_total = sum(cost_list)
+
+    return render_template("dashboard.html", cost_total=cost_total)
