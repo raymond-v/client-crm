@@ -15,16 +15,16 @@ A simple CRM system for organizing client information, emphasizing a progression
 
 ## Installation
 1. Clone the repository:
-git clone https://github.com/raymond-v/client-crm.git
+`git clone https://github.com/raymond-v/client-crm.git`
 
 2. Navigate into the folder:
-cd client-crm
+`cd client-crm`
 
 3. Install dependencies:
-pip install -r requirements.txt
+`pip install -r requirements.txt`
 
 4. Run the app:
-flask run
+`flask run`
 
 5. Open in browser:
-http://127.0.0.1:5000
+`http://127.0.0.1:5000`
