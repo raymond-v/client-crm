@@ -7,6 +7,13 @@ A simple CRM system for organizing client information, emphasizing a progression
 - Filter progression pipeline
 - Personalized client dashboard
 
+## File Structure
+- app.py
+- templates/
+- static/
+- client.db
+- requirements.txt
+
 ## Tech Stack
 - Frontend: HTML with Bootstrap
 - Backend: Python (Flask)
