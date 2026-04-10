@@ -183,11 +183,11 @@ def index():
     # "all" is just a deafult in case no radio is selected
     selected_status = request.args.get("status", "all")
     if selected_status == "all":
-        cursor.execute("SELECT handle, platform, status, cost, notes, id FROM clients WHERE user_id = ?", (session["user_id"],))
+        cursor.execute("SELECT handle, platform, status, cost, notes, id FROM clients WHERE user_id = ? ORDER BY id DESC", (session["user_id"],))
         table = cursor.fetchall()
         conn.close()
     else:
-        cursor.execute("SELECT handle, platform, status, cost, notes, id FROM clients WHERE user_id = ? AND status = ?", (session["user_id"], selected_status))
+        cursor.execute("SELECT handle, platform, status, cost, notes, id FROM clients WHERE user_id = ? AND status = ?  ORDER BY id DESC", (session["user_id"], selected_status))
         table = cursor.fetchall()
         conn.close()
 
